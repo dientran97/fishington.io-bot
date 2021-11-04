@@ -6,7 +6,6 @@ import time
 #from pynput.mouse import Button, Controller
 from pynput import mouse, keyboard
 import random
-import pyautogui
 import pydirectinput
 
 class Fisher:
@@ -20,9 +19,15 @@ class Fisher:
 
         self.bar_top = 0
         self.bar_left = 0
+
+        # Increase this limit if you have a larger basket
         self.fish_count = 0
-        self.fish_limit = 15
+        self.fish_limit = 6
+        
         self.keep_fishing = True
+        
+        # Adding spot to update sell thresholds!
+        self.sell_threshold = .8
 
     def fish(self):
         while self.keep_fishing:
@@ -104,7 +109,7 @@ class Fisher:
         self.keyboard.release(keyboard.Key.space)
 
         max_loc, max_val = self.Template_Match("SellBox.jpg", self.Screen_Shot())
-        if max_val > .9:
+        if max_val > self.sell_threshold:
             print("We got fish to sell!")
             self.Click_Location(max_loc[0] + 20, max_loc[1] + 30)
 
@@ -112,14 +117,14 @@ class Fisher:
             time.sleep(1)
             print("Looking to for sell")
             max_loc, max_val = self.Template_Match("SellFor.jpg", self.Screen_Shot())
-            if max_val > .9:
+            if max_val > self.sell_threshold:
                 
                 print("Pushing Sell") 
                 self.Click_Location(max_loc[0] + 40, max_loc[1] + 10)
                 time.sleep(1)
                 print("Looking to for sell Green")
                 max_loc, max_val = self.Template_Match("Sell.jpg", self.Screen_Shot())
-                while max_val > .9:
+                while max_val > self.sell_threshold:
                     print("Pushing Sell Green")
                     self.Click_Location(max_loc[0] + 10, max_loc[1] + 10)
 
@@ -166,7 +171,6 @@ class Fisher:
         pydirectinput.mouseDown()
         time.sleep(wait)
         pydirectinput.mouseUp()
-        #self.mouse.position = (x, y)
 
     def start_fresh(self):
         time.sleep(5)
@@ -181,9 +185,7 @@ class Fisher:
 
 # Test our classes and functions
 if __name__ == "__main__":
+    print("Unless your testing run main.py")
     fisher = Fisher()
     time.sleep(5)
-    #fisher.Set_Bobber()
     fisher.Sell_Fish()
-    #fisher.close_caught_fish() 
-    #fisher.start_fresh()
