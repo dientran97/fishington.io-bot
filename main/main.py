@@ -41,6 +41,7 @@ def Throw_Line(left=800, top=800, wait=2):
 # Need a dynamic way to find bar location.
 fisher = Fisher()
 fish_thread = threading.Thread(target=fisher.fish)
+bar_left, bar_top = [800, 800]
 bar_left, bar_top = fisher.Set_Bobber()
 
 print(bar_left, bar_top)
@@ -57,9 +58,13 @@ while True:
 	)
 	frame = np.array(scr)
 	hsvframe = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+	# cv2.imshow('HSV image', hsvframe)
+	# cv2.waitKey(0)
+	# cv2.destroyAllWindows()
 	if fisher.fish_count >= fisher.fish_limit:
 		time.sleep(10)
 		continue
+
 	red_lower = np.array([0, 150, 150], np.uint8)
 	red_upper = np.array([10, 255, 255], np.uint8)
 	red_mask = cv2.inRange(hsvframe, red_lower, red_upper)
@@ -77,13 +82,13 @@ while True:
 	res_green = cv2.bitwise_and(frame, frame, mask=green_mask)
 
 	countours = cv2.findContours(red_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[0]
-
 	for contour in countours:
 		area = cv2.contourArea(contour)
 		if area > 900:
+
 			x1, y1, w1, h1 = cv2.boundingRect(contour)
 			frame_red_bar = cv2.rectangle(
-				frame, (x1, y1), (x1 + w1, y1 + h1), (0, 0, 255), 2
+				frame, (x1, y1), (x1 + w1, y1 + h1), (0, 0, 0), 2
 			)
 			cv2.putText(
 				frame,
@@ -91,11 +96,11 @@ while True:
 				(x1 + w1, y1 + h1),
 				cv2.FONT_HERSHEY_SIMPLEX,
 				0.7,
-				(0, 0, 255),
+				(0, 0, 0),
 			)
 			x_red1 = int(x1 + w1 / 2)
 			y_red1 = int(y1 + h1 / 2)
-			cv2.circle(frame, (x_red1, y_red1), 3, (0, 0, 255), -1)
+			cv2.circle(frame, (x_red1, y_red1), 3, (0, 0, 0), -1)
 			try:
 				cv2.line(frame, (x_red2, y_red2), (x_red1, y_red1), (0, 0, 255), 2)
 			except NameError:
@@ -111,6 +116,7 @@ while True:
 
 	for contour in countours:
 		area2 = cv2.contourArea(contour)
+		print (area2)
 		if 600 > area2 > 100:
 			x1, y1, w1, h1 = cv2.boundingRect(contour)
 			frame_red = cv2.rectangle(
